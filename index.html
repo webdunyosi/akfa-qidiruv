@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mahsulot Qidiruv — Akfa Plast</title>
+  <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#2563eb' },
+          },
+          boxShadow: {
+            card: '0 8px 24px rgba(0,0,0,0.08)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Autocomplete active item style (keyboard nav) */
+    .suggestion-item.active { background: rgb(229 231 235); }
+    .dark .suggestion-item.active { background: rgb(55 65 81); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+  <header class="sticky top-0 z-40 backdrop-blur bg-white/70 dark:bg-gray-900/70 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <img src="images/akfa.png" alt="" class="h-10">
+        <h1 class="text-xl sm:text-2xl font-semibold tracking-tight hidden md:flex items-center gap-2"><i class='bx  bx-search text-red-700 font-bold' ></i>  <span>Mahsulot Qidiruv tizimi</span></h1>
+        <div class="flex items-center gap-2">
+        <button id="refreshBtn" class="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
+          ↻ Yangilash
+        </button>
+        <button id="themeToggle" class="px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
+          🌗 Dark/Light
+        </button>
+        </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Filters -->
+    <section class="bg-white dark:bg-gray-950 shadow-card rounded-xl p-4 sm:p-6 border border-gray-100 dark:border-gray-800">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Profil -->
+        <div class="relative">
+          <label for="profilInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Profil seriya</label>
+          <input id="profilInput" type="text" placeholder="Masalan: 70mm"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="profilSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+
+        <!-- Mahsulot nomi -->
+        <div class="relative">
+          <label for="mahsulotInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Mahsulot nomi</label>
+          <input id="mahsulotInput" type="text" placeholder="Masalan: Коса"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="mahsulotSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+
+        <!-- SAP kod -->
+        <div class="relative">
+          <label for="sapInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">SAP kod</label>
+          <input id="sapInput" type="text" placeholder="Masalan: PT4.52.F0001"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="sapSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <button id="clearBtn" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700">
+          Tozalash
+        </button>
+        <span id="countBadge" class="text-sm px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-900/50 hidden"></span>
+        <span id="status" class="text-sm text-gray-500"></span>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="mt-6">
+      <div id="results" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="emptyState" class="hidden text-center py-16">
+        <div class="text-5xl mb-3">🗂️</div>
+        <p class="text-gray-600 dark:text-gray-400">Hech nima topilmadi</p>
+      </div>
+      <div id="loader" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 py-10">
+        <svg class="animate-spin h-5 w-5 text-primary" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4A4 4 0 004 12z"></path>
+        </svg>
+        <span>Yuklanmoqda...</span>
+      </div>
+      <div id="errorBox" class="hidden bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-900/40 px-4 py-3 rounded-lg"></div>
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-4 py-10 text-xs text-gray-500 dark:text-gray-400">
+    <p>Maslahat: Filtrlarga yozayotganda takliflardan (autocomplete) foydalaning. Enter tugmasi bilan tanlashingiz mumkin.</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
