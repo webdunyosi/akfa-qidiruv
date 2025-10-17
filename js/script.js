@@ -80,7 +80,7 @@ function filterData() {
 
   const filtered = DATA.filter(row => {
     const p = String(row["Profil seriya"] ?? "").toLowerCase();
-    const m = String(row["Mahsulot nomi"] ?? "").toLowerCase();
+    const m = String(row["Mahsulot turi"] ?? "").toLowerCase();
     const s = String(row["SAP kod"] ?? "").toLowerCase();
     return (!profil || p.includes(profil)) &&
            (!mahsulot || m.includes(mahsulot)) &&
@@ -108,13 +108,26 @@ function renderResults(rows) {
   const frag = document.createDocumentFragment();
   rows.forEach(row => {
     const card = document.createElement('div');
-    card.className = "bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 rounded-xl p-4 shadow-card hover:shadow-lg transition-shadow";
+    card.className = "bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex";
+    
+    const imageUrl = row["Rasm"] || '';
+    const imageHTML = imageUrl ? 
+      `<div class="relative w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+        <img src="${esc(imageUrl)}" alt="${esc(row["Mahsulot turi"])}" 
+             class="w-full h-full object-contain p-3" 
+             onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-3xl\\'>🖼️</div>'">
+      </div>` : 
+      `<div class="w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <span class="text-4xl text-gray-300 dark:text-gray-700">📦</span>
+      </div>`;
+    
     card.innerHTML = `
-      <div class="space-y-1 text-sm">
+      ${imageHTML}
+      <div class="p-4 flex-1 space-y-2 text-sm">
         <div><span class="text-gray-500 dark:text-gray-400">Profil:</span> <span class="font-medium text-primary">${esc(row["Profil seriya"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Mahsulot nomi:</span> <span class="font-medium">${esc(row["Mahsulot nomi"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">SAP kod:</span> <span class="font-mono">${esc(row["SAP kod"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Norma:</span> <span>${esc(row["Norma"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Mahsulot nomi:</span> <span class="font-medium">${esc(row["Mahsulot turi"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">SAP kod:</span> <span class="font-mono text-xs">${esc(row["SAP kod"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Norma:</span> <span class="font-semibold text-green-600 dark:text-green-400">${esc(row["Norma"]) || "-"}</span></div>
       </div>
     `;
     frag.appendChild(card);
@@ -188,7 +201,7 @@ function chooseActive(input, box, which) {
 
 // ==== EVENTS ====
 const buildProfil = () => buildSuggestions(profilInput, profilSug, "Profil seriya", "profil");
-const buildMahsulot = () => buildSuggestions(mahsulotInput, mahsulotSug, "Mahsulot nomi", "mahsulot");
+const buildMahsulot = () => buildSuggestions(mahsulotInput, mahsulotSug, "Mahsulot turi", "mahsulot");
 const buildSap = () => buildSuggestions(sapInput, sapSug, "SAP kod", "sap");
 
 profilInput.addEventListener('input', debounce(() => { buildProfil(); filterData(); }));
