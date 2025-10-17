@@ -120,7 +120,7 @@ function renderResults(rows) {
     const imageHTML = imageUrl ? 
       `<div class="relative w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
         <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
-             class="w-full h-full object-contain p-3" 
+             class="w-full h-full object-contain p-0" 
              onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-3xl\\'>🖼️</div>'">
       </div>` : 
       `<div class="w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
@@ -275,7 +275,7 @@ function openModal(row) {
   const imageHTML = imageUrl ? 
     `<div class="w-80 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl overflow-hidden">
       <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
-           class="w-full h-full object-contain p-8" 
+           class="w-full h-full object-contain p-0" 
            onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-6xl\\'>🖼️ Rasm yuklanmadi</div>'">
     </div>` : 
     `<div class="w-80 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl flex items-center justify-center">
