@@ -2,13 +2,15 @@
 const scriptURL = "https://script.google.com/macros/s/AKfycbwddNN0w1jTmXRscVYK6F4VQo2KCpsB3wlD8Bt8MRBRp30ADGe8n1gmxz6CrOBcOTuIVQ/exec"; // <-- Google Apps Script Web App URL'ingizni shu yerga qo'ying
 
 // ==== ELEMENTS ====
-const profilInput = document.getElementById("profilInput");
-const mahsulotInput = document.getElementById("mahsulotInput");
 const sapInput = document.getElementById("sapInput");
+const tavsifInput = document.getElementById("tavsifInput");
+const seriyaInput = document.getElementById("seriyaInput");
+const qoplamaInput = document.getElementById("qoplamaInput");
 
-const profilSug = document.getElementById("profilSuggestions");
-const mahsulotSug = document.getElementById("mahsulotSuggestions");
 const sapSug = document.getElementById("sapSuggestions");
+const tavsifSug = document.getElementById("tavsifSuggestions");
+const seriyaSug = document.getElementById("seriyaSuggestions");
+const qoplamaSug = document.getElementById("qoplamaSuggestions");
 
 const results = document.getElementById("results");
 const emptyState = document.getElementById("emptyState");
@@ -22,7 +24,7 @@ const themeToggle = document.getElementById("themeToggle");
 
 // ==== STATE ====
 let DATA = [];
-let suggestionIndex = { profil: -1, mahsulot: -1, sap: -1 }; // for keyboard nav
+let suggestionIndex = { sap: -1, tavsif: -1, seriya: -1, qoplama: -1 }; // for keyboard nav
 
 // ==== THEME ====
 const root = document.documentElement;
@@ -74,17 +76,20 @@ async function loadData() {
 
 // ==== FILTERING ====
 function filterData() {
-  const profil = profilInput.value.trim().toLowerCase();
-  const mahsulot = mahsulotInput.value.trim().toLowerCase();
   const sap = sapInput.value.trim().toLowerCase();
+  const tavsif = tavsifInput.value.trim().toLowerCase();
+  const seriya = seriyaInput.value.trim().toLowerCase();
+  const qoplama = qoplamaInput.value.trim().toLowerCase();
 
   const filtered = DATA.filter(row => {
-    const p = String(row["Profil seriya"] ?? "").toLowerCase();
-    const m = String(row["Mahsulot turi"] ?? "").toLowerCase();
-    const s = String(row["SAP kod"] ?? "").toLowerCase();
-    return (!profil || p.includes(profil)) &&
-           (!mahsulot || m.includes(mahsulot)) &&
-           (!sap || s.includes(sap));
+    const s = String(row["SAP код"] ?? "").toLowerCase();
+    const t = String(row["Краткий текст товара в SAP"] ?? "").toLowerCase();
+    const sr = String(row["Название серии/системы продукта"] ?? "").toLowerCase();
+    const q = String(row["Покрытие"] ?? "").toLowerCase();
+    return (!sap || s.includes(sap)) &&
+           (!tavsif || t.includes(tavsif)) &&
+           (!seriya || sr.includes(seriya)) &&
+           (!qoplama || q.includes(qoplama));
   });
 
   renderResults(filtered);
@@ -111,10 +116,10 @@ function renderResults(rows) {
     card.className = "bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex cursor-pointer";
     card.onclick = () => openModal(row);
     
-    const imageUrl = row["Rasm"] || '';
+    const imageUrl = row["Картина"] || '';
     const imageHTML = imageUrl ? 
       `<div class="relative w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-        <img src="${esc(imageUrl)}" alt="${esc(row["Mahsulot turi"])}" 
+        <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
              class="w-full h-full object-contain p-3" 
              onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-3xl\\'>🖼️</div>'">
       </div>` : 
@@ -125,10 +130,10 @@ function renderResults(rows) {
     card.innerHTML = `
       ${imageHTML}
       <div class="p-4 flex-1 space-y-2 text-sm">
-        <div><span class="text-gray-500 dark:text-gray-400">Profil:</span> <span class="font-medium text-primary">${esc(row["Profil seriya"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Mahsulot nomi:</span> <span class="font-medium">${esc(row["Mahsulot turi"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">SAP kod:</span> <span class="font-mono text-xs">${esc(row["SAP kod"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Norma:</span> <span class="font-semibold text-green-600 dark:text-green-400">${esc(row["Norma"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">SAP kod:</span> <span class="font-mono text-xs font-semibold text-primary">${esc(row["SAP код"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Tavsif:</span> <span class="font-medium">${esc(row["Краткий текст товара в SAP"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Seriya:</span> <span>${esc(row["Название серии/системы продукта"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Qoplama:</span> <span class="font-semibold text-green-600 dark:text-green-400">${esc(row["Покрытие"]) || "-"}</span></div>
       </div>
     `;
     frag.appendChild(card);
@@ -201,27 +206,15 @@ function chooseActive(input, box, which) {
 }
 
 // ==== EVENTS ====
-const buildProfil = () => buildSuggestions(profilInput, profilSug, "Profil seriya", "profil");
-const buildMahsulot = () => buildSuggestions(mahsulotInput, mahsulotSug, "Mahsulot turi", "mahsulot");
-const buildSap = () => buildSuggestions(sapInput, sapSug, "SAP kod", "sap");
+const buildSap = () => buildSuggestions(sapInput, sapSug, "SAP код", "sap");
+const buildTavsif = () => buildSuggestions(tavsifInput, tavsifSug, "Краткий текст товара в SAP", "tavsif");
+const buildSeriya = () => buildSuggestions(seriyaInput, seriyaSug, "Название серии/системы продукта", "seriya");
+const buildQoplama = () => buildSuggestions(qoplamaInput, qoplamaSug, "Покрытие", "qoplama");
 
-profilInput.addEventListener('input', debounce(() => { buildProfil(); filterData(); }));
-mahsulotInput.addEventListener('input', debounce(() => { buildMahsulot(); filterData(); }));
 sapInput.addEventListener('input', debounce(() => { buildSap(); filterData(); }));
-
-profilInput.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(profilSug, 'profil', +1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(profilSug, 'profil', -1); }
-  else if (e.key === 'Enter') { chooseActive(profilInput, profilSug, 'profil'); }
-  else if (e.key === 'Escape') { profilSug.classList.add('hidden'); }
-});
-
-mahsulotInput.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(mahsulotSug, 'mahsulot', +1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(mahsulotSug, 'mahsulot', -1); }
-  else if (e.key === 'Enter') { chooseActive(mahsulotInput, mahsulotSug, 'mahsulot'); }
-  else if (e.key === 'Escape') { mahsulotSug.classList.add('hidden'); }
-});
+tavsifInput.addEventListener('input', debounce(() => { buildTavsif(); filterData(); }));
+seriyaInput.addEventListener('input', debounce(() => { buildSeriya(); filterData(); }));
+qoplamaInput.addEventListener('input', debounce(() => { buildQoplama(); filterData(); }));
 
 sapInput.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(sapSug, 'sap', +1); }
@@ -230,21 +223,45 @@ sapInput.addEventListener('keydown', (e) => {
   else if (e.key === 'Escape') { sapSug.classList.add('hidden'); }
 });
 
+tavsifInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(tavsifSug, 'tavsif', +1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(tavsifSug, 'tavsif', -1); }
+  else if (e.key === 'Enter') { chooseActive(tavsifInput, tavsifSug, 'tavsif'); }
+  else if (e.key === 'Escape') { tavsifSug.classList.add('hidden'); }
+});
+
+seriyaInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(seriyaSug, 'seriya', +1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(seriyaSug, 'seriya', -1); }
+  else if (e.key === 'Enter') { chooseActive(seriyaInput, seriyaSug, 'seriya'); }
+  else if (e.key === 'Escape') { seriyaSug.classList.add('hidden'); }
+});
+
+qoplamaInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(qoplamaSug, 'qoplama', +1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(qoplamaSug, 'qoplama', -1); }
+  else if (e.key === 'Enter') { chooseActive(qoplamaInput, qoplamaSug, 'qoplama'); }
+  else if (e.key === 'Escape') { qoplamaSug.classList.add('hidden'); }
+});
+
 document.addEventListener('click', (e) => {
-  if (!profilInput.contains(e.target) && !profilSug.contains(e.target)) profilSug.classList.add('hidden');
-  if (!mahsulotInput.contains(e.target) && !mahsulotSug.contains(e.target)) mahsulotSug.classList.add('hidden');
   if (!sapInput.contains(e.target) && !sapSug.contains(e.target)) sapSug.classList.add('hidden');
+  if (!tavsifInput.contains(e.target) && !tavsifSug.contains(e.target)) tavsifSug.classList.add('hidden');
+  if (!seriyaInput.contains(e.target) && !seriyaSug.contains(e.target)) seriyaSug.classList.add('hidden');
+  if (!qoplamaInput.contains(e.target) && !qoplamaSug.contains(e.target)) qoplamaSug.classList.add('hidden');
 });
 
 clearBtn.addEventListener('click', () => {
-  profilInput.value = '';
-  mahsulotInput.value = '';
   sapInput.value = '';
-  profilSug.classList.add('hidden');
-  mahsulotSug.classList.add('hidden');
+  tavsifInput.value = '';
+  seriyaInput.value = '';
+  qoplamaInput.value = '';
   sapSug.classList.add('hidden');
+  tavsifSug.classList.add('hidden');
+  seriyaSug.classList.add('hidden');
+  qoplamaSug.classList.add('hidden');
   filterData();
-  profilInput.focus();
+  sapInput.focus();
 });
 
 refreshBtn.addEventListener('click', loadData);
@@ -254,10 +271,10 @@ function openModal(row) {
   const modal = document.getElementById('modal');
   const modalContent = document.getElementById('modalContent');
   
-  const imageUrl = row["Rasm"] || '';
+  const imageUrl = row["Картина"] || '';
   const imageHTML = imageUrl ? 
     `<div class="mb-6 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl overflow-hidden">
-      <img src="${esc(imageUrl)}" alt="${esc(row["Mahsulot turi"])}" 
+      <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
            class="w-full max-h-96 object-contain p-8" 
            onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-64 text-gray-400 dark:text-gray-600 text-6xl\\'>🖼️ Rasm yuklanmadi</div>'">
     </div>` : 
@@ -269,20 +286,20 @@ function openModal(row) {
     ${imageHTML}
     <div class="space-y-4">
       <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
-        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Profil seriya</div>
-        <div class="text-2xl font-semibold text-primary">${esc(row["Profil seriya"]) || "-"}</div>
-      </div>
-      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
-        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Mahsulot nomi</div>
-        <div class="text-xl font-medium">${esc(row["Mahsulot turi"]) || "-"}</div>
-      </div>
-      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
         <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">SAP kod</div>
-        <div class="text-lg font-mono">${esc(row["SAP kod"]) || "-"}</div>
+        <div class="text-2xl font-mono font-semibold text-primary">${esc(row["SAP код"]) || "-"}</div>
+      </div>
+      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Mahsulot tavsifi</div>
+        <div class="text-xl font-medium">${esc(row["Краткий текст товара в SAP"]) || "-"}</div>
+      </div>
+      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Seriya / Sistema</div>
+        <div class="text-lg">${esc(row["Название серии/системы продукта"]) || "-"}</div>
       </div>
       <div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Norma</div>
-        <div class="text-2xl font-bold text-green-600 dark:text-green-400">${esc(row["Norma"]) || "-"}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Qoplama</div>
+        <div class="text-2xl font-bold text-green-600 dark:text-green-400">${esc(row["Покрытие"]) || "-"}</div>
       </div>
     </div>
   `;

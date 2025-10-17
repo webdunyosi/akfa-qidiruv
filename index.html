@@ -76,7 +76,7 @@
 </head>
 <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
   <header class="sticky top-0 z-40 backdrop-blur bg-white/70 dark:bg-gray-900/70 border-b border-gray-200 dark:border-gray-800">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <img src="images/akfa.png" alt="" class="h-10">
         <h1 class="text-xl sm:text-2xl font-semibold tracking-tight hidden md:flex items-center gap-2"><i class='bx  bx-search text-red-700 font-bold' ></i>  <span>Mahsulot Qidiruv tizimi</span></h1>
         <div class="flex items-center gap-2">
@@ -90,32 +90,40 @@
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-6">
+  <main class="max-w-7xl mx-auto px-4 py-6">
     <!-- Filters -->
     <section class="bg-white dark:bg-gray-950 shadow-card rounded-xl p-4 sm:p-6 border border-gray-100 dark:border-gray-800">
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Profil -->
-        <div class="relative">
-          <label for="profilInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Profil seriya</label>
-          <input id="profilInput" type="text" placeholder="Masalan: 70mm"
-                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
-          <div id="profilSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
-        </div>
-
-        <!-- Mahsulot nomi -->
-        <div class="relative">
-          <label for="mahsulotInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Mahsulot nomi</label>
-          <input id="mahsulotInput" type="text" placeholder="Masalan: Коса"
-                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
-          <div id="mahsulotSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
-        </div>
-
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- SAP kod -->
         <div class="relative">
           <label for="sapInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">SAP kod</label>
-          <input id="sapInput" type="text" placeholder="Masalan: PT4.52.F0001"
+          <input id="sapInput" type="text" placeholder="PDF.40.WE150-7001"
                  class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
           <div id="sapSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+
+        <!-- Mahsulot tavsifi -->
+        <div class="relative">
+          <label for="tavsifInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Mahsulot tavsifi</label>
+          <input id="tavsifInput" type="text" placeholder="PD.WE.15-7 PE L6000"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="tavsifSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+
+        <!-- Seriya -->
+        <div class="relative">
+          <label for="seriyaInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Seriya</label>
+          <input id="seriyaInput" type="text" placeholder="PODOK ELITE"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="seriyaSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
+        </div>
+
+        <!-- Qoplama -->
+        <div class="relative">
+          <label for="qoplamaInput" class="block text-sm mb-1 text-gray-600 dark:text-gray-400">Qoplama</label>
+          <input id="qoplamaInput" type="text" placeholder="Ламинированный"
+                 class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2.5 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" autocomplete="off">
+          <div id="qoplamaSuggestions" class="absolute left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-56 overflow-auto z-50 hidden"></div>
         </div>
       </div>
 
@@ -146,7 +154,7 @@
     </section>
   </main>
 
-  <footer class="max-w-5xl mx-auto px-4 py-10 text-xs text-gray-500 dark:text-gray-400">
+  <footer class="max-w-7xl mx-auto px-4 py-10 text-xs text-gray-500 dark:text-gray-400">
     <p>Maslahat: Filtrlarga yozayotganda takliflardan (autocomplete) foydalaning. Enter tugmasi bilan tanlashingiz mumkin.</p>
   </footer>
 
