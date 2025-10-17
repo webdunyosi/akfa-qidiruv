@@ -108,7 +108,8 @@ function renderResults(rows) {
   const frag = document.createDocumentFragment();
   rows.forEach(row => {
     const card = document.createElement('div');
-    card.className = "bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex";
+    card.className = "bg-white dark:bg-gray-950 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex cursor-pointer";
+    card.onclick = () => openModal(row);
     
     const imageUrl = row["Rasm"] || '';
     const imageHTML = imageUrl ? 
@@ -247,6 +248,61 @@ clearBtn.addEventListener('click', () => {
 });
 
 refreshBtn.addEventListener('click', loadData);
+
+// ==== MODAL ====
+function openModal(row) {
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modalContent');
+  
+  const imageUrl = row["Rasm"] || '';
+  const imageHTML = imageUrl ? 
+    `<div class="mb-6 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl overflow-hidden">
+      <img src="${esc(imageUrl)}" alt="${esc(row["Mahsulot turi"])}" 
+           class="w-full max-h-96 object-contain p-8" 
+           onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-64 text-gray-400 dark:text-gray-600 text-6xl\\'>🖼️ Rasm yuklanmadi</div>'">
+    </div>` : 
+    `<div class="mb-6 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl flex items-center justify-center h-64">
+      <span class="text-8xl text-gray-300 dark:text-gray-700">📦</span>
+    </div>`;
+  
+  modalContent.innerHTML = `
+    ${imageHTML}
+    <div class="space-y-4">
+      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Profil seriya</div>
+        <div class="text-2xl font-semibold text-primary">${esc(row["Profil seriya"]) || "-"}</div>
+      </div>
+      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Mahsulot nomi</div>
+        <div class="text-xl font-medium">${esc(row["Mahsulot turi"]) || "-"}</div>
+      </div>
+      <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">SAP kod</div>
+        <div class="text-lg font-mono">${esc(row["SAP kod"]) || "-"}</div>
+      </div>
+      <div>
+        <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Norma</div>
+        <div class="text-2xl font-bold text-green-600 dark:text-green-400">${esc(row["Norma"]) || "-"}</div>
+      </div>
+    </div>
+  `;
+  
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+  if (!event || event.target.id === 'modal' || event.type === 'click') {
+    const modal = document.getElementById('modal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+}
+
+// ESC tugmasi bilan yopish
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
 
 // ==== INIT ====
 loadData();
