@@ -4,13 +4,13 @@ const scriptURL = "https://script.google.com/macros/s/AKfycbwddNN0w1jTmXRscVYK6F
 // ==== ELEMENTS ====
 const sapInput = document.getElementById("sapInput");
 const tavsifInput = document.getElementById("tavsifInput");
-const seriyaInput = document.getElementById("seriyaInput");
-const qoplamaInput = document.getElementById("qoplamaInput");
+const normaInput = document.getElementById("normaInput");
+const gruppaInput = document.getElementById("gruppaInput");
 
 const sapSug = document.getElementById("sapSuggestions");
 const tavsifSug = document.getElementById("tavsifSuggestions");
-const seriyaSug = document.getElementById("seriyaSuggestions");
-const qoplamaSug = document.getElementById("qoplamaSuggestions");
+const normaSug = document.getElementById("normaSuggestions");
+const gruppaSug = document.getElementById("gruppaSuggestions");
 
 const results = document.getElementById("results");
 const emptyState = document.getElementById("emptyState");
@@ -24,7 +24,7 @@ const themeToggle = document.getElementById("themeToggle");
 
 // ==== STATE ====
 let DATA = [];
-let suggestionIndex = { sap: -1, tavsif: -1, seriya: -1, qoplama: -1 }; // for keyboard nav
+let suggestionIndex = { sap: -1, tavsif: -1, norma: -1, gruppa: -1 }; // for keyboard nav
 
 // ==== THEME ====
 const root = document.documentElement;
@@ -78,18 +78,18 @@ async function loadData() {
 function filterData() {
   const sap = sapInput.value.trim().toLowerCase();
   const tavsif = tavsifInput.value.trim().toLowerCase();
-  const seriya = seriyaInput.value.trim().toLowerCase();
-  const qoplama = qoplamaInput.value.trim().toLowerCase();
+  const norma = normaInput.value.trim().toLowerCase();
+  const gruppa = gruppaInput.value.trim().toLowerCase();
 
   const filtered = DATA.filter(row => {
-    const s = String(row["SAP код"] ?? "").toLowerCase();
-    const t = String(row["Краткий текст товара в SAP"] ?? "").toLowerCase();
-    const sr = String(row["Название серии/системы продукта"] ?? "").toLowerCase();
-    const q = String(row["Покрытие"] ?? "").toLowerCase();
+    const s = String(row["САП"] ?? "").toLowerCase();
+    const t = String(row["Краткий текст"] ?? "").toLowerCase();
+    const n = String(row["норма кг"] ?? "").toLowerCase();
+    const g = String(row["Группа"] ?? "").toLowerCase();
     return (!sap || s.includes(sap)) &&
            (!tavsif || t.includes(tavsif)) &&
-           (!seriya || sr.includes(seriya)) &&
-           (!qoplama || q.includes(qoplama));
+           (!norma || n.includes(norma)) &&
+           (!gruppa || g.includes(gruppa));
   });
 
   renderResults(filtered);
@@ -119,7 +119,7 @@ function renderResults(rows) {
     const imageUrl = row["Картина"] || '';
     const imageHTML = imageUrl ? 
       `<div class="relative w-32 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-        <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
+        <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст"])}" 
              class="w-full h-full object-contain p-0" 
              onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-3xl\\'>🖼️</div>'">
       </div>` : 
@@ -130,10 +130,10 @@ function renderResults(rows) {
     card.innerHTML = `
       ${imageHTML}
       <div class="p-4 flex-1 space-y-2 text-sm">
-        <div><span class="text-gray-500 dark:text-gray-400">SAP kod:</span> <span class="font-mono text-xs font-semibold text-primary">${esc(row["SAP код"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Tavsif:</span> <span class="font-medium">${esc(row["Краткий текст товара в SAP"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Seriya:</span> <span>${esc(row["Название серии/системы продукта"]) || "-"}</span></div>
-        <div><span class="text-gray-500 dark:text-gray-400">Qoplama:</span> <span class="font-semibold text-green-600 dark:text-green-400">${esc(row["Покрытие"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">САП:</span> <span class="font-mono text-xs font-semibold text-primary">${esc(row["САП"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Tavsif:</span> <span class="font-medium">${esc(row["Краткий текст"]) || "-"}</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Norma:</span> <span class="font-semibold text-blue-600 dark:text-blue-400">${esc(row["норма кг"]) || "-"} kg</span></div>
+        <div><span class="text-gray-500 dark:text-gray-400">Gruppa:</span> <span class="font-semibold text-green-600 dark:text-green-400">${esc(row["Группа"]) || "-"}</span></div>
       </div>
     `;
     frag.appendChild(card);
@@ -206,15 +206,15 @@ function chooseActive(input, box, which) {
 }
 
 // ==== EVENTS ====
-const buildSap = () => buildSuggestions(sapInput, sapSug, "SAP код", "sap");
-const buildTavsif = () => buildSuggestions(tavsifInput, tavsifSug, "Краткий текст товара в SAP", "tavsif");
-const buildSeriya = () => buildSuggestions(seriyaInput, seriyaSug, "Название серии/системы продукта", "seriya");
-const buildQoplama = () => buildSuggestions(qoplamaInput, qoplamaSug, "Покрытие", "qoplama");
+const buildSap = () => buildSuggestions(sapInput, sapSug, "САП", "sap");
+const buildTavsif = () => buildSuggestions(tavsifInput, tavsifSug, "Краткий текст", "tavsif");
+const buildNorma = () => buildSuggestions(normaInput, normaSug, "норма кг", "norma");
+const buildGruppa = () => buildSuggestions(gruppaInput, gruppaSug, "Группа", "gruppa");
 
 sapInput.addEventListener('input', debounce(() => { buildSap(); filterData(); }));
 tavsifInput.addEventListener('input', debounce(() => { buildTavsif(); filterData(); }));
-seriyaInput.addEventListener('input', debounce(() => { buildSeriya(); filterData(); }));
-qoplamaInput.addEventListener('input', debounce(() => { buildQoplama(); filterData(); }));
+normaInput.addEventListener('input', debounce(() => { buildNorma(); filterData(); }));
+gruppaInput.addEventListener('input', debounce(() => { buildGruppa(); filterData(); }));
 
 sapInput.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(sapSug, 'sap', +1); }
@@ -230,36 +230,36 @@ tavsifInput.addEventListener('keydown', (e) => {
   else if (e.key === 'Escape') { tavsifSug.classList.add('hidden'); }
 });
 
-seriyaInput.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(seriyaSug, 'seriya', +1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(seriyaSug, 'seriya', -1); }
-  else if (e.key === 'Enter') { chooseActive(seriyaInput, seriyaSug, 'seriya'); }
-  else if (e.key === 'Escape') { seriyaSug.classList.add('hidden'); }
+normaInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(normaSug, 'norma', +1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(normaSug, 'norma', -1); }
+  else if (e.key === 'Enter') { chooseActive(normaInput, normaSug, 'norma'); }
+  else if (e.key === 'Escape') { normaSug.classList.add('hidden'); }
 });
 
-qoplamaInput.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(qoplamaSug, 'qoplama', +1); }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(qoplamaSug, 'qoplama', -1); }
-  else if (e.key === 'Enter') { chooseActive(qoplamaInput, qoplamaSug, 'qoplama'); }
-  else if (e.key === 'Escape') { qoplamaSug.classList.add('hidden'); }
+gruppaInput.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(gruppaSug, 'gruppa', +1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(gruppaSug, 'gruppa', -1); }
+  else if (e.key === 'Enter') { chooseActive(gruppaInput, gruppaSug, 'gruppa'); }
+  else if (e.key === 'Escape') { gruppaSug.classList.add('hidden'); }
 });
 
 document.addEventListener('click', (e) => {
   if (!sapInput.contains(e.target) && !sapSug.contains(e.target)) sapSug.classList.add('hidden');
   if (!tavsifInput.contains(e.target) && !tavsifSug.contains(e.target)) tavsifSug.classList.add('hidden');
-  if (!seriyaInput.contains(e.target) && !seriyaSug.contains(e.target)) seriyaSug.classList.add('hidden');
-  if (!qoplamaInput.contains(e.target) && !qoplamaSug.contains(e.target)) qoplamaSug.classList.add('hidden');
+  if (!normaInput.contains(e.target) && !normaSug.contains(e.target)) normaSug.classList.add('hidden');
+  if (!gruppaInput.contains(e.target) && !gruppaSug.contains(e.target)) gruppaSug.classList.add('hidden');
 });
 
 clearBtn.addEventListener('click', () => {
   sapInput.value = '';
   tavsifInput.value = '';
-  seriyaInput.value = '';
-  qoplamaInput.value = '';
+  normaInput.value = '';
+  gruppaInput.value = '';
   sapSug.classList.add('hidden');
   tavsifSug.classList.add('hidden');
-  seriyaSug.classList.add('hidden');
-  qoplamaSug.classList.add('hidden');
+  normaSug.classList.add('hidden');
+  gruppaSug.classList.add('hidden');
   filterData();
   sapInput.focus();
 });
@@ -274,8 +274,8 @@ function openModal(row) {
   const imageUrl = row["Картина"] || '';
   const imageHTML = imageUrl ? 
     `<div class="w-80 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl overflow-hidden">
-      <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст товара в SAP"])}" 
-           class="w-full h-full object-contain p-0" 
+      <img src="${esc(imageUrl)}" alt="${esc(row["Краткий текст"])}" 
+           class="w-full h-full object-contain p-8" 
            onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-gray-400 dark:text-gray-600 text-6xl\\'>🖼️ Rasm yuklanmadi</div>'">
     </div>` : 
     `<div class="w-80 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-xl flex items-center justify-center">
@@ -287,20 +287,20 @@ function openModal(row) {
       ${imageHTML}
       <div class="flex-1 space-y-4">
         <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
-          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">SAP kod</div>
-          <div class="text-2xl font-mono font-semibold text-primary break-all">${esc(row["SAP код"]) || "-"}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">САП</div>
+          <div class="text-2xl font-mono font-semibold text-primary break-all">${esc(row["САП"]) || "-"}</div>
         </div>
         <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
-          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Mahsulot tavsifi</div>
-          <div class="text-xl font-medium">${esc(row["Краткий текст товара в SAP"]) || "-"}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Краткий текст</div>
+          <div class="text-xl font-medium">${esc(row["Краткий текст"]) || "-"}</div>
         </div>
         <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
-          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Seriya / Sistema</div>
-          <div class="text-lg">${esc(row["Название серии/системы продукта"]) || "-"}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Норма (кг)</div>
+          <div class="text-lg font-semibold text-blue-600 dark:text-blue-400">${esc(row["норма кг"]) || "-"} kg</div>
         </div>
         <div>
-          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Qoplama</div>
-          <div class="text-2xl font-bold text-green-600 dark:text-green-400">${esc(row["Покрытие"]) || "-"}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Группа</div>
+          <div class="text-2xl font-bold text-green-600 dark:text-green-400">${esc(row["Группа"]) || "-"}</div>
         </div>
       </div>
     </div>
